@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Record Consultation</title>
+</head>
+<body>
+    <h2>Hi, {{ user.name }} — Record Consultation</h2>
+    <video id="video" autoplay muted></video>
+    <br>
+    <button id="start">Start</button>
+    <button id="stop" disabled>Stop</button>
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="patient" value="{{ user.name }}">
+        <input type="file" name="video" id="videoFile" hidden>
+        <button type="submit" id="uploadBtn" disabled>Upload</button>
+    </form>
+
+    <script>
+        const video = document.getElementById('video');
+        const startBtn = document.getElementById('start');
+        const stopBtn = document.getElementById('stop');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const videoFileInput = document.getElementById('videoFile');
+        const form = document.getElementById('uploadForm');
+
+        let mediaRecorder;
+        let recordedBlobs = [];
+
+        startBtn.onclick = async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            video.srcObject = stream;
+
+            recordedBlobs = [];
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) recordedBlobs.push(e.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+                const file = new File([blob], 'consultation.webm', { type: 'video/webm' });
+
+                // Attach video to form
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                videoFileInput.files = dataTransfer.files;
+
+                uploadBtn.disabled = false;
+            };
+
+            mediaRecorder.start();
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+        };
+
+        stopBtn.onclick = () => {
+            mediaRecorder.stop();
+            video.srcObject.getTracks().forEach(track => track.stop());
+            stopBtn.disabled = true;
+        };
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/save_video', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.text();
+            alert(result);
+            uploadBtn.disabled = true;
+            startBtn.disabled = false;
+        };
+    </script>
+</body>
+</html>

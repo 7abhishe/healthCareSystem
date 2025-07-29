@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Recorded Videos</title>
+</head>
+<body>
+    <h2>Recorded Consultation Videos</h2>
+    {% if videos %}
+        {% for video in videos %}
+            <div style="margin-bottom: 20px;">
+                <video width="640" height="360" controls>
+                    <source src="{{ video }}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No videos found.</p>
+    {% endif %}
+</body>
+</html>
