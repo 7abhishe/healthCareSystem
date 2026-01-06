@@ -1,26 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Appointments</title>
-</head>
-<body>
-    <h2>Appointments</h2>
-    <ul>
-        {% for appointment in appointments %}
-            <li>
-                {{ appointment.date }} - {{ appointment.time }} with {{ appointment.patient }}
-            </li>
-        {% else %}
-            <li>No appointments scheduled.</li>
-        {% endfor %}
-    </ul>
+from flask import Blueprint, render_template, request, redirect, url_for, session
 
-    <h3>Book a New Appointment</h3>
-    <form method="POST" action="{{ url_for('appointments.book') }}">
-        <label>Date: <input type="date" name="date" required></label><br>
-        <label>Time: <input type="time" name="time" required></label><br>
-        <label>Patient Name: <input type="text" name="patient" required></label><br>
-        <button type="submit">Book Appointment</button>
-    </form>
-</body>
-</html>
+appointments = Blueprint('appointments', __name__)
+
+@appointments.route('/book_appointment', methods=['GET', 'POST'])
+def book_appointment():
+    if request.method == 'POST':
+        patient = request.form['patient']
+        doctor = request.form['doctor']
+        date = request.form['date']
+        slot = request.form['slot']
+
+        # Save appointment logic here (file/db)
+        # Example: session store (for demo purpose)
+        session['last_appointment'] = {
+            "patient": patient,
+            "doctor": doctor,
+            "date": date,
+            "slot": slot
+        }
+
+        # ✅ After booking → redirect to record page
+        return redirect(url_for('record.record_page'))
+
+    return render_template('book_appointment.html')

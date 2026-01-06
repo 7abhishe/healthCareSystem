@@ -7,12 +7,13 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 record = Blueprint('record', __name__)
 
-
 @record.route('/record')
 def record_page():
     if 'user' not in session:
         return redirect(url_for('auth.login'))
-    return render_template('record.html', user=session['user'])
+
+    appointment = session.get('last_appointment', {})
+    return render_template('record.html', user=session['user'], appointment=appointment)
 
 @record.route('/save_video', methods=['POST'])
 def save_video():
