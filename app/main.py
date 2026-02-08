@@ -4,6 +4,7 @@ from routes.record_routes import record
 from routes.video_view_routes import video_view
 from routes.upload_routes import upload
 from routes.appointment_routes import appointments
+from routes.genai_routes import genai_bp
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ app.register_blueprint(record)
 app.register_blueprint(video_view)
 app.register_blueprint(upload)
 app.register_blueprint(appointments)
+app.register_blueprint(genai_bp)
 
 # Root route
 @app.route('/')

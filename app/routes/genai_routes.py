@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
-from app.genai.emergency_agent import EmergencyAgent
+try:
+    from app.genai.emergency_agent import EmergencyAgent
+except ImportError:
+    from genai.emergency_agent import EmergencyAgent
 
 genai_bp = Blueprint('genai', __name__)
 agent = EmergencyAgent()
