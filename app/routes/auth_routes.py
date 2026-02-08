@@ -1,30 +1,63 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+import csv
+import os
 
 auth = Blueprint('auth', __name__)
-users = []  # In-memory storage (can replace with CSV or DB)
+USER_FILE = 'users.csv'
+
+# Ensure CSV exists
+if not os.path.exists(USER_FILE):
+    with open(USER_FILE, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['role', 'name', 'email', 'password'])
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    role_filter = request.args.get('role') # ?role=Doctor or ?role=Patient
+    
     if request.method == 'POST':
         role = request.form['role']
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        users.append({'role': role, 'name': name, 'email': email, 'password': password})
+        
+        # Check if email exists
+        with open(USER_FILE, mode='r', newline='') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if len(row) > 2 and row[2] == email:
+                    flash("Email already registered.", "error")
+                    return redirect(url_for('auth.register'))
+
+        with open(USER_FILE, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([role, name, email, password])
+            
         flash("Registration successful! Please login.", "success")
         return redirect(url_for('auth.login'))
-    return render_template('register.html')
+        
+    return render_template('register.html', role_filter=role_filter)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        user = next((u for u in users if u['email'] == email and u['password'] == password), None)
+        
+        user = None
+        with open(USER_FILE, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if row['email'] == email and row['password'] == password:
+                    user = row
+                    break
+        
         if user:
             session['user'] = user
             flash("Login successful!", "success")
-            return redirect(url_for('appointments.book_appointment'))  # 🔁 Go to appointment page
+            if user['role'] == 'Doctor':
+                 return redirect(url_for('auth.dashboard')) # Doctors might need a specific dashboard later
+            return redirect(url_for('appointments.book_appointment'))
         else:
             flash("Invalid credentials.", "error")
     return render_template('login.html')

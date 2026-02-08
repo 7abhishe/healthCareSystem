@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Dashboard</title>
 </head>
+
 <body>
     <h2>Welcome, {{ user.name }} ({{ user.role }})</h2>
     <ul>
+        <li><a href="/appointments/book_appointment">Book Appointment</a></li>
+        <li><a href="/appointments/my_appointments">My Appointments</a></li>
+        <li><a href="/emergency">🚨 Emergency AI Chat</a></li>
         <li><a href="/record">Record Consultation Video</a></li>
-        <li><a href="/logout">Logout</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
     </ul>
 </body>
+
 </html>

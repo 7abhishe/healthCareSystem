@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Book Appointment</title>
 </head>
+
 <body>
     <h1>Book an Appointment</h1>
     <form method="post">
@@ -10,17 +12,21 @@
         <input type="text" name="patient" required><br><br>
 
         <label>Doctor Name:</label><br>
-        <input type="text" name="doctor" required><br><br>
+        <select name="doctor" required>
+            {% for doc in doctors %}
+            <option value="{{ doc }}">{{ doc }}</option>
+            {% endfor %}
+        </select><br><br>
 
         <label>Date:</label><br>
         <input type="date" name="date" required><br><br>
 
         <label>Slot:</label><br>
         <select name="slot" required>
-            <option>10–11 AM</option>
-            <option>11–12 PM</option>
-            <option>4–5 PM</option>
-            <option>5–6 PM</option>
+            <option value="10-11 AM">10-11 AM</option>
+            <option value="11-12 PM">11-12 PM</option>
+            <option value="3-4 PM">3-4 PM</option>
+            <option value="4-5 PM">4-5 PM</option>
         </select><br><br>
 
         <button type="submit">Book Appointment</button>
@@ -28,14 +34,15 @@
 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        {% for category, message in messages %}
-            {% if category == 'success' %}
-                <p style="color: green;"><strong>{{ message }}</strong></p>
-            {% elif category == 'error' %}
-                <p style="color: red;"><strong>{{ message }}</strong></p>
-            {% endif %}
-        {% endfor %}
+    {% for category, message in messages %}
+    {% if category == 'success' %}
+    <p style="color: green;"><strong>{{ message }}</strong></p>
+    {% elif category == 'error' %}
+    <p style="color: red;"><strong>{{ message }}</strong></p>
     {% endif %}
-{% endwith %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 </body>
+
 </html>

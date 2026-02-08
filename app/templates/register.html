@@ -1,9 +1,13 @@
-<h2>Register</h2>
+{% if role_filter %}
+    <h2>Register as {{ role_filter }}</h2>
+{% else %}
+    <h2>Register</h2>
+{% endif %}
 <form method="POST">
     Role:
     <select name="role">
-        <option value="Doctor">Doctor</option>
-        <option value="Patient">Patient</option>
+        <option value="Doctor" {% if role_filter == 'Doctor' %}selected{% endif %}>Doctor</option>
+        <option value="Patient" {% if role_filter == 'Patient' %}selected{% endif %}>Patient</option>
     </select><br>
     Name: <input type="text" name="name"><br>
     Email: <input type="email" name="email"><br>

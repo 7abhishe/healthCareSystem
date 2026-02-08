@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Emergency AI Chat</title>
+    <style>
+        .chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+
+        .user-msg {
+            color: blue;
+            text-align: right;
+        }
+
+        .ai-msg {
+            color: red;
+            text-align: left;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🚨 Emergency AI Assistant</h1>
+    <div class="chat-box" id="chatBox">
+        {% for msg in chat_history %}
+        <div class="{{ msg.type }}-msg">
+            <strong>{{ msg.sender }}:</strong> {{ msg.text }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <form method="POST">
+        <input type="text" name="user_input" placeholder="Describe your symptoms..." style="width: 70%;" required>
+        <button type="submit">Ask AI</button>
+    </form>
+
+    <br>
+    <a href="/auth/dashboard">Back to Dashboard</a>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Appointments</title>
+</head>
+
+<body>
+    <h1>My Appointments</h1>
+    <a href="/appointments/book_appointment">Book New</a> | <a href="/auth/logout">Logout</a>
+    <hr>
+
+    {% if appointments %}
+    <ul>
+        {% for appt in appointments %}
+        <li>
+            <strong>{{ appt.doctor }}</strong> on {{ appt.date }} at {{ appt.slot }}
+            <form action="{{ url_for('appointments.reschedule') }}" method="POST" style="display:inline;">
+                <input type="hidden" name="old_doctor" value="{{ appt.doctor }}">
+                <input type="hidden" name="old_date" value="{{ appt.date }}">
+                <input type="hidden" name="old_slot" value="{{ appt.slot }}">
+
+                Reschedule to:
+                <select name="new_slot">
+                    <option value="10-11 AM">10-11 AM</option>
+                    <option value="11-12 PM">11-12 PM</option>
+                    <option value="3-4 PM">3-4 PM</option>
+                    <option value="4-5 PM">4-5 PM</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No appointments found.</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="{{ category }}">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>
