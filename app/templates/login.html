@@ -1,7 +1,28 @@
-<h2>Login</h2>
-<form method="POST">
-    Email: <input type="email" name="email"><br>
-    Password: <input type="password" name="password"><br>
-    <input type="submit" value="Login">
+{% extends "base.html" %}
+
+{% block title %}Login - Hospital AI{% endblock %}
+
+{% block content %}
+<div class="auth-container animate-fade-in">
+    <div class="card">
+        <h2 class="text-center" style="margin-bottom: 1.5rem; color: var(--primary);">Welcome Back</h2>
+        <form method="POST">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="name@example.com" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+
+            <input type="submit" value="Login" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+        </form>
+        <p class="text-center" style="margin-top: 1rem; color: var(--text-muted);">
+            New here? <a href="{{ url_for('auth.register') }}" style="color: var(--primary);">Create an Account</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+Email: <input type="email" name="email"><br>
+Password: <input type="password" name="password"><br>
+<input type="submit" value="Login">
 </form>
 <a href="/register">Don't have an account? Register</a>

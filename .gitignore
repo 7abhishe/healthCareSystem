@@ -4,4 +4,7 @@ __pycache__/
 .env
 *.log
 .DS_Store
-.venv/
+.env
+.venv
+__pycache__
+*.pyc/

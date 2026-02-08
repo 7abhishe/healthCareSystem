@@ -1,48 +1,38 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Book Appointment</title>
-</head>
+{% block title %}Book Appointment - Hospital AI{% endblock %}
 
-<body>
-    <h1>Book an Appointment</h1>
-    <form method="post">
-        <label>Patient Name:</label><br>
-        <input type="text" name="patient" required><br><br>
+{% block content %}
+<div class="auth-container animate-fade-in" style="max-width: 600px;">
+    <div class="card">
+        <h2 class="text-center" style="margin-bottom: 2rem;">📅 Book Appointment</h2>
 
-        <label>Doctor Name:</label><br>
-        <select name="doctor" required>
-            {% for doc in doctors %}
-            <option value="{{ doc }}">{{ doc }}</option>
-            {% endfor %}
-        </select><br><br>
+        <form method="post">
+            <!-- Patient Name (Read-only since logged in) -->
+            <label>Patient Name</label>
+            <input type="text" value="{{ session['user']['name'] }}" disabled style="opacity: 0.7;">
 
-        <label>Date:</label><br>
-        <input type="date" name="date" required><br><br>
+            <label>Select Doctor</label>
+            <select name="doctor" required>
+                {% for doc in doctors %}
+                <option value="{{ doc }}">{{ doc }}</option>
+                {% endfor %}
+            </select>
 
-        <label>Slot:</label><br>
-        <select name="slot" required>
-            <option value="10-11 AM">10-11 AM</option>
-            <option value="11-12 PM">11-12 PM</option>
-            <option value="3-4 PM">3-4 PM</option>
-            <option value="4-5 PM">4-5 PM</option>
-        </select><br><br>
+            <label>Date</label>
+            <input type="date" name="date" required>
 
-        <button type="submit">Book Appointment</button>
-    </form>
+            <label>Time Slot</label>
+            <select name="slot" required>
+                <option value="10-11 AM">10-11 AM</option>
+                <option value="11-12 PM">11-12 PM</option>
+                <option value="3-4 PM">3-4 PM</option>
+                <option value="4-5 PM">4-5 PM</option>
+            </select>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    {% if category == 'success' %}
-    <p style="color: green;"><strong>{{ message }}</strong></p>
-    {% elif category == 'error' %}
-    <p style="color: red;"><strong>{{ message }}</strong></p>
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-</body>
-
-</html>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Confirm
+                Booking</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

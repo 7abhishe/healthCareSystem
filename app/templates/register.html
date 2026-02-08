@@ -1,17 +1,37 @@
-{% if role_filter %}
-    <h2>Register as {{ role_filter }}</h2>
-{% else %}
-    <h2>Register</h2>
-{% endif %}
-<form method="POST">
-    Role:
-    <select name="role">
-        <option value="Doctor" {% if role_filter == 'Doctor' %}selected{% endif %}>Doctor</option>
-        <option value="Patient" {% if role_filter == 'Patient' %}selected{% endif %}>Patient</option>
-    </select><br>
-    Name: <input type="text" name="name"><br>
-    Email: <input type="email" name="email"><br>
-    Password: <input type="password" name="password"><br>
-    <input type="submit" value="Register">
-</form>
-<a href="/login">Already have an account? Login</a>
+{% extends "base.html" %}
+
+{% block title %}Register - Hospital AI{% endblock %}
+
+{% block content %}
+<div class="auth-container animate-fade-in">
+    <div class="card">
+        {% if role_filter %}
+        <h2 class="text-center" style="margin-bottom: 1.5rem; color: var(--primary);">Join as {{ role_filter }}</h2>
+        {% else %}
+        <h2 class="text-center" style="margin-bottom: 1.5rem; color: var(--primary);">Create Account</h2>
+        {% endif %}
+
+        <form method="POST">
+            <label>I am a:</label>
+            <select name="role">
+                <option value="Doctor" {% if role_filter=='Doctor' %}selected{% endif %}>Doctor</option>
+                <option value="Patient" {% if role_filter=='Patient' %}selected{% endif %}>Patient</option>
+            </select>
+
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="John Doe" required>
+
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="name@example.com" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+
+            <input type="submit" value="Register" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+        </form>
+        <p class="text-center" style="margin-top: 1rem; color: var(--text-muted);">
+            Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--primary);">Login</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

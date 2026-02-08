@@ -1,135 +1,140 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Record Consultation</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        video {
-            width: 480px;
-            height: 360px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
-        button {
-            margin: 5px;
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-        #timer {
-            font-weight: bold;
-            margin-left: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h2>Hi, {{ user.name }} — Record Consultation</h2>
-    
-    <video id="video" autoplay muted></video>
-    <video id="preview" controls style="display:none;"></video>
-    <br>
-    
-    <button id="start">🎥 Start Recording</button>
-    <button id="stop" disabled>⏹ Stop Recording</button>
-    <span id="timer">00:00</span>
-    <br><br>
+{% extends "base.html" %}
 
-    <form id="uploadForm" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="patient" value="{{ user.name }}">
-        <input type="file" name="video" id="videoFile" hidden>
-        <button type="submit" id="uploadBtn" disabled>⬆️ Upload Video</button>
-    </form>
+{% block title %}Record Consultation - Hospital AI{% endblock %}
 
-    <p id="status"></p>
+{% block content %}
+<div class="text-center animate-fade-in">
+    <h2 style="margin-bottom: 1rem;">🎥 Record Consultation</h2>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">Record your session for AI analysis. Ensure good lighting.
+    </p>
 
-    <script>
-        const video = document.getElementById('video');
-        const preview = document.getElementById('preview');
-        const startBtn = document.getElementById('start');
-        const stopBtn = document.getElementById('stop');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const videoFileInput = document.getElementById('videoFile');
-        const form = document.getElementById('uploadForm');
-        const timer = document.getElementById('timer');
-        const status = document.getElementById('status');
+    <div class="card" style="display: inline-block; padding: 1rem;">
+        <video id="video" autoplay muted
+            style="width: 100%; max-width: 640px; border-radius: 12px; background: black;"></video>
+        <video id="preview" controls style="display:none; width: 100%; max-width: 640px; border-radius: 12px;"></video>
 
-        let mediaRecorder;
-        let recordedBlobs = [];
-        let recordingTime = 0;
-        let timerInterval;
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; align-items: center;">
+            <button id="start" class="btn btn-primary">🔴 Start Recording</button>
+            <button id="stop" class="btn" style="background: rgba(255,255,255,0.1);" disabled>⏹ Stop</button>
+            <span id="timer" style="font-family: monospace; font-size: 1.2rem; min-width: 60px;">00:00</span>
+        </div>
 
-        function formatTime(seconds) {
-            const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
-            const secs = String(seconds % 60).padStart(2, "0");
-            return `${mins}:${secs}`;
-        }
+        <form id="uploadForm" method="POST" enctype="multipart/form-data" style="margin-top: 1rem;">
+            <input type="hidden" name="patient" value="{{ user.name }}">
+            <input type="file" name="video" id="videoFile" hidden>
+            <button type="submit" id="uploadBtn" class="btn btn-primary" style="width: 100%; display: none;">⬆️ Upload &
+                Analyze</button>
+        </form>
 
-        startBtn.onclick = async () => {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            video.srcObject = stream;
+        <p id="status" style="margin-top: 1rem; font-weight: bold; color: var(--primary); height: 20px;"></p>
+    </div>
+</div>
 
-            recordedBlobs = [];
-            mediaRecorder = new MediaRecorder(stream);
+<script>
+    const video = document.getElementById('video');
+    const preview = document.getElementById('preview');
+    const startBtn = document.getElementById('start');
+    const stopBtn = document.getElementById('stop');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const videoFileInput = document.getElementById('videoFile');
+    const form = document.getElementById('uploadForm');
+    const timer = document.getElementById('timer');
+    const status = document.getElementById('status');
 
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) recordedBlobs.push(e.data);
-            };
+    let mediaRecorder;
+    let recordedBlobs = [];
+    let recordingTime = 0;
+    let timerInterval;
 
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(recordedBlobs, { type: 'video/webm' });
-                const file = new File([blob], 'consultation.webm', { type: 'video/webm' });
+    function formatTime(seconds) {
+        const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+        const secs = String(seconds % 60).padStart(2, "0");
+        return `${mins}:${secs}`;
+    }
 
-                // Attach video to form
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                videoFileInput.files = dataTransfer.files;
+    startBtn.onclick = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        preview.style.display = 'none';
 
-                // Show preview
-                preview.src = URL.createObjectURL(blob);
-                preview.style.display = "block";
+        recordedBlobs = [];
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;cvcodecs=vp8' });
 
-                uploadBtn.disabled = false;
-            };
-
-            mediaRecorder.start();
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            uploadBtn.disabled = true;
-
-            // Start timer
-            recordingTime = 0;
-            timer.textContent = "00:00";
-            timerInterval = setInterval(() => {
-                recordingTime++;
-                timer.textContent = formatTime(recordingTime);
-            }, 1000);
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordedBlobs.push(e.data);
         };
 
-        stopBtn.onclick = () => {
-            mediaRecorder.stop();
-            video.srcObject.getTracks().forEach(track => track.stop());
-            stopBtn.disabled = true;
-            clearInterval(timerInterval);
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+            const file = new File([blob], 'consultation.webm', { type: 'video/webm' });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            videoFileInput.files = dataTransfer.files;
+
+            preview.src = URL.createObjectURL(blob);
+            video.style.display = "none";
+            preview.style.display = "block";
+
+            uploadBtn.style.display = 'inline-block';
+            startBtn.disabled = false; // Allow retake
+            startBtn.textContent = '🔄 Retake';
         };
 
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        uploadBtn.style.display = 'none';
 
-            status.textContent = "⏳ Uploading...";
-            uploadBtn.disabled = true;
+        recordingTime = 0;
+        timer.textContent = "00:00";
+        timerInterval = setInterval(() => {
+            recordingTime++;
+            timer.textContent = formatTime(recordingTime);
+        }, 1000);
 
-            const response = await fetch('/save_video', {
-                method: 'POST',
-                body: formData
-            });
+        status.textContent = "Recording...";
+        document.getElementById('video').style.boxShadow = "0 0 20px var(--accent-error)";
+    };
 
-            const result = await response.text();
+    stopBtn.onclick = () => {
+        mediaRecorder.stop();
+        video.srcObject.getTracks().forEach(track => track.stop());
+        stopBtn.disabled = true;
+        clearInterval(timerInterval);
+        status.textContent = "Recording Stopped.";
+        document.getElementById('video').style.boxShadow = "none";
+    };
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        status.textContent = "⏳ Uploading & Analyzing... Do not close window.";
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Processing...";
+
+        const response = await fetch('/save_video', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.text();
+
+        if (result.includes("Redirecting")) {
+            status.textContent = "✅ Analysis Complete! Redirecting...";
+            window.location.href = "{{ url_for('record.analysis_result') }}";
+        } else if (result.includes("<!doctype html>")) {
+            // Catch Flask error pages
+            status.textContent = "❌ Server Error or Quota Exceeded. Please try again later.";
+            console.error("Server Error:", result);
+            uploadBtn.disabled = false;
+        } else {
             status.textContent = "✅ " + result;
-            startBtn.disabled = false;
-        };
-    </script>
-</body>
-</html>
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = "⬆️ Upload & Analyze";
+        }
+    };
+</script>
+{% endblock %}

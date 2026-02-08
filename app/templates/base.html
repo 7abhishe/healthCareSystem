@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hospital AI{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar animate-fade-in">
+        <a href="/" class="nav-brand">
+            🏥 Hospital AI
+        </a>
+        <div class="nav-links">
+            {% if session.get('user') %}
+            {% if session.user.role == 'Doctor' %}
+            <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('appointments.book_appointment') }}">Book</a>
+            <a href="{{ url_for('appointments.my_appointments') }}">My Appts</a>
+            <a href="{{ url_for('record.record_page') }}">Consultation</a>
+            {% endif %}
+            <a href="{{ url_for('genai.emergency') }}">Emergency AI</a>
+            <a href="{{ url_for('auth.dashboard') }}">Profile</a>
+            <a href="{{ url_for('auth.logout') }}" style="color: var(--accent-error);">Logout</a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary"
+                style="color: white; padding: 0.5rem 1rem;">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container animate-fade-in">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-msg flash-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+        &copy; 2026 Hospital AI System.
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

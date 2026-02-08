@@ -1,19 +1,50 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Dashboard</title>
-</head>
+{% block title %}Dashboard - Hospital AI{% endblock %}
 
-<body>
-    <h2>Welcome, {{ user.name }} ({{ user.role }})</h2>
-    <ul>
-        <li><a href="/appointments/book_appointment">Book Appointment</a></li>
-        <li><a href="/appointments/my_appointments">My Appointments</a></li>
-        <li><a href="/emergency">🚨 Emergency AI Chat</a></li>
-        <li><a href="/record">Record Consultation Video</a></li>
-        <li><a href="/auth/logout">Logout</a></li>
-    </ul>
-</body>
+{% block content %}
+<div class="animate-fade-in">
+    <h2 style="font-weight: 300; margin-bottom: 2rem;">Welcome back, <strong style="color: var(--primary);">{{ user.name
+            }}</strong> <small style="font-size: 0.6em; color: var(--text-muted);">({{ user.role }})</small></h2>
 
-</html>
+    <div class="grid-menu">
+        <!-- Card 1: Appointments -->
+        <a href="{{ url_for('appointments.book_appointment') }}" style="text-decoration: none; color: inherit;">
+            <div class="card feature-card">
+                <span class="feature-icon">📅</span>
+                <h3>Book Appointment</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Schedule a visit with our specialists.</p>
+            </div>
+        </a>
+
+        <!-- Card 2: My Schedule -->
+        {% if user.role == 'Patient' %}
+        <a href="{{ url_for('appointments.my_appointments') }}" style="text-decoration: none; color: inherit;">
+            <div class="card feature-card">
+                <span class="feature-icon">📋</span>
+                <h3>My Schedule</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">View and reschedule your visits.</p>
+            </div>
+        </a>
+        {% endif %}
+
+        <!-- Card 3: Emergency AI -->
+        <a href="{{ url_for('genai.emergency') }}" style="text-decoration: none; color: inherit;">
+            <div class="card feature-card" style="border-color: rgba(239, 68, 68, 0.4);">
+                <span class="feature-icon">🚨</span>
+                <h3 style="color: var(--accent-error);">Emergency AI</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Get immediate triage advice.</p>
+            </div>
+        </a>
+
+        <!-- Card 4: Record Video -->
+        <a href="{{ url_for('record.record_page') }}" style="text-decoration: none; color: inherit;">
+            <div class="card feature-card">
+                <span class="feature-icon">🎥</span>
+                <h3>Consultation</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Record video for AI analysis.</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hospital Management System</title>
-</head>
-<body>
-    <h1>Welcome to AI-Powered HMS</h1>
-    <a href="/login">Login</a> | <a href="/register">Register</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Hospital AI - Future of Medicine{% endblock %}
+
+{% block content %}
+<div class="text-center animate-fade-in" style="padding: 4rem 0;">
+    <h1
+        style="font-size: 3.5rem; margin-bottom: 1.5rem; background: -webkit-linear-gradient(right, var(--primary), white); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        The Future of Healthcare
+    </h1>
+    <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem;">
+        Experience the power of AI-driven telemedicine. Smart scheduling, instant triage, and intelligent video
+        analysis.
+    </p>
+
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary"
+            style="font-size: 1.1rem; padding: 1rem 2rem;">Get Started</a>
+        <a href="{{ url_for('auth.login') }}" class="btn"
+            style="background: rgba(255, 255, 255, 0.1); font-size: 1.1rem; padding: 1rem 2rem;">Login</a>
+    </div>
+
+    <div class="grid-menu mt-2">
+        <div class="card">
+            <span class="feature-icon">🤖</span>
+            <h3>AI Diagnostics</h3>
+            <p style="color: var(--text-muted);">Instant analysis of symptoms via chat or video.</p>
+        </div>
+        <div class="card">
+            <span class="feature-icon">🏥</span>
+            <h3>Smart Booking</h3>
+            <p style="color: var(--text-muted);">Effortless appointment scheduling with specialists.</p>
+        </div>
+        <div class="card">
+            <span class="feature-icon">🛡️</span>
+            <h3>Secure Records</h3>
+            <p style="color: var(--text-muted);">Your health data, encrypted and accessible.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

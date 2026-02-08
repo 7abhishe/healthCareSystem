@@ -1,2 +1,5 @@
 role,name,email,password
 Patient,abhi,abc@ht.com,ht.com
+Doctor,ab,ab@gmail.com,ab
+Patient,R1.0,abcd@decimal.com,abcd
+Patient,ab,ab@hotmail.com,ab

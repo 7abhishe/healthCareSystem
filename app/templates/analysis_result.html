@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result - Hospital AI{% endblock %}
+
+{% block content %}
+<div class="container animate-fade-in" style="max-width: 900px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>🔍 Analysis Report</h2>
+        <a href="{{ url_for('auth.dashboard') }}" class="btn" style="background: rgba(255,255,255,0.1);">Back to
+            Dashboard</a>
+    </div>
+
+    <div class="card">
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+            <div>
+                <label>Patient</label>
+                <div style="font-size: 1.2rem; font-weight: bold;">{{ patient }}</div>
+            </div>
+            <div>
+                <label>Date</label>
+                <div style="font-size: 1.2rem;">{{ date }}</div>
+            </div>
+        </div>
+
+        {% if error %}
+        <div class="flash-msg flash-error" style="text-align: center;">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% else %}
+        <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; line-height: 1.8;">
+            <!-- Using | safe because we trust the AI output structure, typically -->
+            <pre style="white-space: pre-wrap; font-family: var(--font-main);">{{ analysis }}</pre>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Disclaimer: This is an AI-generated report. Please verify with a licensed medical professional.
+        </p>
+    </div>
+</div>
+{% endblock %}
