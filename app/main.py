@@ -1,3 +1,8 @@
+import sys
+import os
+# Ensure the app directory is in the python path so imports starting with 'routes' work
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask, render_template
 from routes.auth_routes import auth
 from routes.record_routes import record
